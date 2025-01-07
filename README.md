@@ -9,6 +9,8 @@ Flappy JM is a flappy bird style game written in python. Done as a small project
 1. **Clone this repository**:
    ```bash
    git clone https://github.com/margaretrl/flappyJM.git
+
+   ```bash
    cd .\flappyjm\
 
 2. Install dependencies: Make sure you have Python installed, then run:
@@ -19,9 +21,9 @@ Flappy JM is a flappy bird style game written in python. Done as a small project
    ```bash
    python flappyJM.py
 
-
 ## TO DO
 - [X] Implement pt system
 - [X] Include better sounds
+
 
 Heavily inspired by: https://www.geeksforgeeks.org/how-to-make-flappy-bird-game-in-pygame/ and https://www.askpython.com/python/examples/flappy-bird-game-in-python 
