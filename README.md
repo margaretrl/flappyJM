@@ -21,6 +21,9 @@ Flappy JM is a flappy bird style game written in python. Done as a small project
    ```bash
    python flappyJM.py
 
+## Current Looks
+![Screenshot](assets/img/SS.png)
+
 ## TO DO
 - [X] Implement pt system
 - [X] Include better sounds
