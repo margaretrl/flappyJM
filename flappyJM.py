@@ -36,7 +36,7 @@ POINT_SOUND = pygame.mixer.Sound('assets/audio/point.wav')  # Scoring sound
 
 class Bird(pygame.sprite.Sprite):
     def __init__(self):
-        super().__init__()  # Initialize the sprite
+        super().__init__()
 
         # Load three bird images for flapping animation
         self.images = [
@@ -64,6 +64,10 @@ class Bird(pygame.sprite.Sprite):
         # Gravity affects the bird's speed
         self.speed += GRAVITY
         self.rect[1] += self.speed  # Move the bird downward
+
+        # Add upper limit: prevent bird from flying off the top
+        if self.rect[1] < 0:
+            self.rect[1] = 0  # Reset bird's position to the top boundary
 
     def bump(self):
         # Make the bird "jump" upward
