@@ -1,69 +1,76 @@
-import pygame, random, time
+import pygame, random, time 
 from pygame.locals import *
 
 ##################################
 ######## Global variables ########
 ##################################
 
-SPEED = 20
-GRAVITY = 2.5
-GAME_SPEED = 15
+SPEED = 20  # Initial speed for the bird
+GRAVITY = 2.5  # How fast the bird falls
+GAME_SPEED = 15  # Speed at which pipes and ground move
 
+# Window and ground dimensions
 WINDOW_WIDTH = 400
 WINDOW_HEIGHT = 600
-
 GROUND_WIDTH = 2 * WINDOW_WIDTH
 GROUND_HEIGHT = 100
 
+# Pipe dimensions and gap
 PIPE_WIDTH = 80
 PIPE_HEIGHT = 500
 PIPE_GAP = 150
 
-# Initialize mixer
+# Initialize the sound mixer for audio effects
 pygame.mixer.init()
 
-# Loading sounds into mixer
-WING_SOUND = pygame.mixer.Sound('assets/audio/wing.wav')
-HIT_SOUND = pygame.mixer.Sound('assets/audio/hit.wav')
-POINT_SOUND = pygame.mixer.Sound('assets/audio/point.wav')
+# Load sound effects
+WING_SOUND = pygame.mixer.Sound('assets/audio/wing.wav')  # Flapping sound
+HIT_SOUND = pygame.mixer.Sound('assets/audio/hit.wav')  # Collision sound
+POINT_SOUND = pygame.mixer.Sound('assets/audio/point.wav')  # Scoring sound
 
 ##################################
 ####### Class Declarations #######
 ##################################
 
-
 #********** Bird Class **********
 
 class Bird(pygame.sprite.Sprite):
     def __init__(self):
-        pygame.sprite.Sprite.__init__(self)
+        super().__init__()  # Initialize the sprite
 
+        # Load three bird images for flapping animation
         self.images = [
             pygame.image.load('assets/sprites/bluebird-upflap.png').convert_alpha(),
             pygame.image.load('assets/sprites/bluebird-midflap.png').convert_alpha(),
             pygame.image.load('assets/sprites/bluebird-downflap.png').convert_alpha()
         ]
 
-        self.speed = SPEED
+        self.speed = SPEED  # Initial upward speed
 
-        self.current_image = 0
-        self.image = self.images[self.current_image]
-        self.mask = pygame.mask.from_surface(self.image)
+        self.current_image = 0  # Index to cycle through images for animation
+        self.image = self.images[self.current_image]  # Start with the first image
+        self.mask = pygame.mask.from_surface(self.image)  # For collision detection
 
+        # Position the bird
         self.rect = self.image.get_rect()
-        self.rect[0] = WINDOW_WIDTH / 6
-        self.rect[1] = WINDOW_HEIGHT / 2
+        self.rect[0] = WINDOW_WIDTH / 6  # X position
+        self.rect[1] = WINDOW_HEIGHT / 2  # Y position
 
     def update(self):
+        # Animate the bird by cycling through images
         self.current_image = (self.current_image + 1) % 3
         self.image = self.images[self.current_image]
+
+        # Gravity affects the bird's speed
         self.speed += GRAVITY
-        self.rect[1] += self.speed
+        self.rect[1] += self.speed  # Move the bird downward
 
     def bump(self):
+        # Make the bird "jump" upward
         self.speed = -SPEED
 
     def begin(self):
+        # Animation for the start screen
         self.current_image = (self.current_image + 1) % 3
         self.image = self.images[self.current_image]
 
@@ -72,23 +79,26 @@ class Bird(pygame.sprite.Sprite):
 
 class Pipe(pygame.sprite.Sprite):
     def __init__(self, inverted, xpos, ysize):
-        pygame.sprite.Sprite.__init__(self)
+        super().__init__()
 
+        # Load and resize the pipe image
         self.image = pygame.image.load('assets/sprites/pipe-jm.png').convert_alpha()
         self.image = pygame.transform.scale(self.image, (PIPE_WIDTH, PIPE_HEIGHT))
 
         self.rect = self.image.get_rect()
-        self.rect[0] = xpos
+        self.rect[0] = xpos  # X position of the pipe
 
+        # Position the pipe based on whether it is inverted (top pipe)
         if inverted:
             self.image = pygame.transform.flip(self.image, False, True)
             self.rect[1] = -(self.rect[3] - ysize)
         else:
-            self.rect[1] = WINDOW_HEIGHT - ysize
+            self.rect[1] = WINDOW_HEIGHT - ysize  # Bottom pipe position
 
-        self.mask = pygame.mask.from_surface(self.image)
+        self.mask = pygame.mask.from_surface(self.image)  # For collision detection
 
     def update(self):
+        # Move the pipe leftward
         self.rect[0] -= GAME_SPEED
 
 
@@ -96,17 +106,18 @@ class Pipe(pygame.sprite.Sprite):
 
 class Ground(pygame.sprite.Sprite):
     def __init__(self, xpos):
-        pygame.sprite.Sprite.__init__(self)
+        super().__init__()
         self.image = pygame.image.load('assets/sprites/base.png').convert_alpha()
         self.image = pygame.transform.scale(self.image, (GROUND_WIDTH, GROUND_HEIGHT))
 
-        self.mask = pygame.mask.from_surface(self.image)
+        self.mask = pygame.mask.from_surface(self.image)  # For collision detection
 
         self.rect = self.image.get_rect()
-        self.rect[0] = xpos
-        self.rect[1] = WINDOW_HEIGHT - GROUND_HEIGHT
+        self.rect[0] = xpos  # X position
+        self.rect[1] = WINDOW_HEIGHT - GROUND_HEIGHT  # Y position at the bottom
 
     def update(self):
+        # Move the ground leftward
         self.rect[0] -= GAME_SPEED
 
 
@@ -115,24 +126,28 @@ class Ground(pygame.sprite.Sprite):
 ##################################
 
 def is_off_screen(sprite):
+    # Check if a sprite has moved completely off-screen
     return sprite.rect[0] < -(sprite.rect[2])
 
 def get_random_pipes(xpos):
+    # Generate a pair of pipes with a random gap
     size = random.randint(100, 300)
-    pipe = Pipe(False, xpos, size)
-    pipe_inverted = Pipe(True, xpos, WINDOW_HEIGHT - size - PIPE_GAP)
+    pipe = Pipe(False, xpos, size)  # Bottom pipe
+    pipe_inverted = Pipe(True, xpos, WINDOW_HEIGHT - size - PIPE_GAP)  # Top pipe
     return pipe, pipe_inverted
 
 def display_score(screen, score):
+    # Display the current score on the top-left corner
     font = pygame.font.Font(None, 36)
     score_surface = font.render(f"Score: {score}", True, (255, 255, 255))
     screen.blit(score_surface, (10, 10))
 
 def display_final_score(screen, score):
+    # Display the final score and "play again" message
     game_over_surface = pygame.image.load('assets/sprites/gameover.png').convert_alpha()
     screen.blit(game_over_surface, (WINDOW_WIDTH // 2 - game_over_surface.get_width() // 2, 100))
 
-    font = pygame.font.SysFont(None, 48) 
+    font = pygame.font.SysFont(None, 48)
     final_score_surface = font.render(f"Final Score: {score}", True, (255, 255, 255))
     screen.blit(final_score_surface, (WINDOW_WIDTH // 2 - final_score_surface.get_width() // 2, 250))
 
@@ -144,11 +159,13 @@ def display_final_score(screen, score):
 ######### Main Function ##########
 ##################################
 if __name__ == "__main__":
-    pygame.init()
+    pygame.init()  # Initialize pygame
     try:
+        # Set up the game screen
         screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
-        pygame.display.set_caption('Flappy Bird')
+        pygame.display.set_caption('Flappy JM')
 
+        # Load background and start screen images
         BACKGROUND = pygame.image.load('assets/sprites/background-day2.png')
         BACKGROUND = pygame.transform.scale(BACKGROUND, (WINDOW_WIDTH, WINDOW_HEIGHT))
         BEGIN_IMAGE = pygame.image.load('assets/sprites/message4.png').convert_alpha()
@@ -191,6 +208,7 @@ if __name__ == "__main__":
                             WING_SOUND.play()
                             begin = False
 
+                # Blit stands for Block Image Transfer
                 screen.blit(BACKGROUND, (0, 0))
                 screen.blit(BEGIN_IMAGE, (120, 150))
 
