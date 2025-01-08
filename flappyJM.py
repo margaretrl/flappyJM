@@ -271,7 +271,7 @@ if __name__ == "__main__":
 
                         # Gradually increase game speed
                         if score % 5 == 0:  # Increase speed every 5 points
-                            GAME_SPEED += 1.2
+                            GAME_SPEED += 1.3
 
                 bird_group.update()
                 ground_group.update()
@@ -311,6 +311,7 @@ if __name__ == "__main__":
                         exit()
                     elif event.type == KEYDOWN and event.key == K_r:
                         replay = True
+                        GAME_SPEED = 15
 
     except Exception as e:
         print(f"An error occurred: {e}")
