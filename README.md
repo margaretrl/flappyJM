@@ -11,11 +11,22 @@ Flappy JM is a flappy bird style game written in python. Done as a small project
    git clone https://github.com/margaretrl/flappyJM.git
    cd .\flappyjm\
 
-2. Install dependencies: Make sure you have Python installed, then run:
-   ```bash
-   pip install pygame
+2. Install python ONLY if you don't have it:
+      ```bash
+      curl -o python-installer.exe https://www.python.org/ftp/python/3.11.5/python-3.11.5-amd64.exe
+   start python-installer.exe
+Choose add env variable in the options. Double check installation using:
 
-3. Run the game:
+      ```bash
+      python --version
+Restart terminal
+
+3.  Install dependencies: Make sure you have Python installed, then run:
+      ```bash
+      pip install pygame
+
+   
+4. Run the game:
    ```bash
    python flappyJM.py
 
