@@ -269,6 +269,10 @@ if __name__ == "__main__":
                         pipe.scored = True  # Mark this pipe pair as scored
                         POINT_SOUND.play()  # Play the point sound
 
+                        # Gradually increase game speed
+                        if score % 5 == 0:  # Increase speed every 5 points
+                            GAME_SPEED += 1.2
+
                 bird_group.update()
                 ground_group.update()
                 pipe_group.update()
@@ -292,6 +296,7 @@ if __name__ == "__main__":
                     HIT_SOUND.play()
                     time.sleep(1)
                     break
+
 
             # Display final score and replay option
             screen.fill((0, 0, 0))
