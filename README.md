@@ -22,7 +22,7 @@ Flappy JM is a flappy bird style game written in python. Done as a small project
    python flappyJM.py
 
 ## Current Looks
-![Screenshot](assets/img/SS.png)
+<img src="assets/img/SS.png" alt="Screenshot" width="275"/>
 
 ## TO DO
 - [X] Implement pt system
